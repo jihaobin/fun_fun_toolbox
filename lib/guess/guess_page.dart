@@ -22,7 +22,8 @@ class _GuessPageState extends State<GuessPage> {
 
   _generateRandomValue(){
     _guessing = true;
-    _randomValue = Random().nextInt(100);
+    // 生成一个0-100的随机数
+    _randomValue = Random().nextInt(101);
     setState(() {});
   }
 
