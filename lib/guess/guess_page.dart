@@ -60,12 +60,13 @@ class _GuessPageState extends State<GuessPage> {
         Column(
           children: [
             if(_isBig!)
-            const Expanded(
+              // 这里的不能将ResultNotice组件声明为const组件，否则不会触发ResultNotice中didUpdateWidget声明周期方法
+              Expanded(
               child: ResultNotice(color: Colors.red, info: "大了",),
             ),
             const Spacer(),
             if(!_isBig!)
-            const Expanded(
+              Expanded(
               child: ResultNotice(color: Colors.blue, info: "小了",),
             ),
           ],

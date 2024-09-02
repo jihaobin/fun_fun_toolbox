@@ -27,9 +27,10 @@ class _ResultNoticeState extends State<ResultNotice>  with TickerProviderStateMi
   }
 
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
+@override
+  void didUpdateWidget(covariant ResultNotice oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _controller.forward(from: 0);
   }
 
   @override
