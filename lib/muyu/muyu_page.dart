@@ -32,20 +32,30 @@ class _MuyuPageState extends State<MuyuPage> {
       body: Column(
         children: [
           Expanded(
-              child: MuyuCountPanel(
-            count: _counter,
-            onTapSwitchImage: () {},
-            onTapSwitchAudio: () {},
-          )),
-          Expanded(
-              child: Stack(alignment: Alignment.topCenter, children: [
-            MuyuImage(
-              image: "assets/images/muyu1.png",
-              onTap: _onKnock,
+            child: MuyuCountPanel(
+              count: _counter,
+              onTapSwitchImage: () {},
+              onTapSwitchAudio: () {},
             ),
-            if (_cruValue != 0)
-              ...List.generate(_muyuAnimateTextCache.length, (index) => MuyuAnimateText(text: '功德+${_muyuAnimateTextCache[index]}',)),
-          ])),
+          ),
+          Expanded(
+            child: Stack(
+              alignment: Alignment.topCenter,
+              children: [
+                MuyuImage(
+                  image: "assets/images/muyu1.png",
+                  onTap: _onKnock,
+                ),
+                if (_cruValue != 0)
+                  ...List.generate(
+                    _muyuAnimateTextCache.length,
+                    (index) => MuyuAnimateText(
+                      text: '功德+${_muyuAnimateTextCache[index]}',
+                    ),
+                  ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -61,7 +71,7 @@ class _MuyuPageState extends State<MuyuPage> {
     _counter += addCount;
 
     // 清除多余的元素
-    if(_muyuAnimateTextCache.length > 30) {
+    if (_muyuAnimateTextCache.length > 30) {
       _muyuAnimateTextCache.clear();
       _muyuAnimateTextCache.add(_cruValue);
     }

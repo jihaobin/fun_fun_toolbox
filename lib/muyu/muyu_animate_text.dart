@@ -11,7 +11,8 @@ class MuyuAnimateText extends StatefulWidget {
   State<MuyuAnimateText> createState() => _MuyuAnimateTextState();
 }
 
-class _MuyuAnimateTextState extends State<MuyuAnimateText> with SingleTickerProviderStateMixin {
+class _MuyuAnimateTextState extends State<MuyuAnimateText>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _opacity;
   late Animation<double> _scale;
@@ -20,13 +21,17 @@ class _MuyuAnimateTextState extends State<MuyuAnimateText> with SingleTickerProv
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 500));
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 500));
     _opacity = Tween<double>(begin: 1, end: 0).animate(_controller);
     _scale = Tween<double>(begin: 1, end: 0.8).animate(_controller);
 
     // 随机生成x轴的偏移
     var positionX = Random().nextInt(5) - 2;
-    _position = Tween<Offset>(begin: Offset(positionX.toDouble(), 3), end: Offset(positionX.toDouble(), 0)).animate(_controller);
+    _position = Tween<Offset>(
+            begin: Offset(positionX.toDouble(), 3),
+            end: Offset(positionX.toDouble(), 0))
+        .animate(_controller);
     _controller.forward();
   }
 
@@ -47,8 +52,10 @@ class _MuyuAnimateTextState extends State<MuyuAnimateText> with SingleTickerProv
       scale: _scale,
       child: SlideTransition(
         position: _position,
-        child: FadeTransition(opacity: _opacity,
-        child: Text(widget.text)),
+        child: FadeTransition(
+          opacity: _opacity,
+          child: Text(widget.text),
+        ),
       ),
     );
   }
