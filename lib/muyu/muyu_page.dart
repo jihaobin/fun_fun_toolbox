@@ -42,6 +42,19 @@ class _MuyuPageState extends State<MuyuPage> {
   ];
   int _activeAudioIndex = 0;
 
+  late AudioPool pool;
+
+  @override
+  void initState() {
+    super.initState();
+    initAudioPool();
+  }
+
+  void initAudioPool() async{
+    // 初始化音频池
+    pool = await FlameAudio.createPool(activeAudio,maxPlayers: 10);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +115,7 @@ class _MuyuPageState extends State<MuyuPage> {
       _muyuAnimateTextCache.add(_cruValue);
     }
     setState(() {});
-    FlameAudio.play(activeAudio);
+    pool.start();
   }
 
   String get activeMuyuImage{
@@ -129,12 +142,18 @@ class _MuyuPageState extends State<MuyuPage> {
     return audioTypeOptions[_activeAudioIndex].src;
   }
 
-  void _onSelectAudio(int selectIndex){
+  void _onSelectAudio(int selectIndex) async{
     Navigator.of(context).pop();
     if(_activeAudioIndex == selectIndex)return;
     _activeAudioIndex = selectIndex;
     FlameAudio.play(activeAudio);
     setState(() {});
+
+    // 更新音频池里的音频
+    pool = await FlameAudio.createPool(
+      activeAudio,
+      maxPlayers: 10,
+    );
   }
 
   void _onTapSwitchAudio(){

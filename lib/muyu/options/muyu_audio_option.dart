@@ -56,6 +56,7 @@ class AudioOptionPanel extends StatelessWidget {
   }
 
   void _tempPlay(String src) async{
-    FlameAudio.play(src);
+    AudioPool pool = await FlameAudio.createPool(src, maxPlayers: 10);
+    pool.start();
   }
 }
