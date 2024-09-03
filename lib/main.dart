@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:fun_toolbox/guess/guess_page.dart';
+
+import 'muyu/muyu_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const GuessPage(),
+      home: const MuyuPage(),
     );
   }
 }
