@@ -5,11 +5,11 @@ class MuyuCountPanel extends StatelessWidget {
       {super.key,
       required this.count,
       required this.onTapSwitchAudio,
-      required this.onTapSwitchImage});
+      required this.onTapSwitchMuyu});
 
   final int count;
   final VoidCallback onTapSwitchAudio;
-  final VoidCallback onTapSwitchImage;
+  final VoidCallback onTapSwitchMuyu;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class MuyuCountPanel extends StatelessWidget {
               ),
               ElevatedButton(
                 style: style,
-                onPressed: onTapSwitchImage,
+                onPressed: onTapSwitchMuyu,
                 child: const Icon(Icons.image, color: Colors.white),
               )
             ],
