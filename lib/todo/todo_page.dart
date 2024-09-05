@@ -60,15 +60,24 @@ class _TodoPageState extends State<TodoPage> {
         controller: controller,
         currentCategory: currentCategory,
         categories: categories,
-        onCategoryChanged: (CategoriesModel? value) {},
+        onCategoryChanged: (CategoriesModel? value) {
+          // 对当前的Todos列表进行分类
+          if (value != null) {
+            currentCategory = value;
+            setState(() {});
+          }
+        },
         onAddTodo: onAddSimpleTodo,
       ),
       body: ListView.builder(
-        itemCount: todos.length,
+        itemCount: categoryTodo.length,
         itemBuilder: (BuildContext context, int index) {
           return TodoItem(
-            deleteTodo: () {},
-            todo: todos[index],
+            deleteTodo: () {
+              todos.removeAt(index);
+              setState(() {});
+            },
+            todo: categoryTodo[index],
           );
         },
       ),
@@ -85,6 +94,10 @@ class _TodoPageState extends State<TodoPage> {
   }
 
   void onAddSimpleTodo() {
+    if (controller.text.isEmpty) {
+      return;
+    }
+
     todos = [
       TodoItemModel(
           id: const Uuid().v4(),
@@ -94,5 +107,14 @@ class _TodoPageState extends State<TodoPage> {
 
     controller.text = "";
     setState(() {});
+  }
+
+  List<TodoItemModel> get categoryTodo {
+    if(currentCategory.type == TodoType.noSet) {
+      // 如果当前分类的类型为未设置，则直接返回所有待办事项
+      return todos;
+    }
+    // 否则，筛选出类型与当前分类相同的待办事项，并将其存入列表中
+    return todos.where((element) => element.type == currentCategory.type).toList();
   }
 }
