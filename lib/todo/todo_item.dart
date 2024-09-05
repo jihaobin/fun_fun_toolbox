@@ -44,28 +44,26 @@ class TodoItem extends StatelessWidget {
             ),
           ],
         ),
-        child: Container(
-
-          child: ListTile(
-            contentPadding: const EdgeInsets.symmetric(horizontal: 0),
-            leading: progressCircle(),
-            title: Text(todo.title,
-                style: const TextStyle(
-                    color: Colors.white, fontWeight: FontWeight.bold)),
-            trailing: Container(
-              constraints: const BoxConstraints(maxWidth: 50),
-              child: TextButton(
-                style: TextButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 5.0,
-                  ), // 设置内边距
-                ),
-                onPressed: () {},
-                child: const Text(
-                  "编辑",
-                  style: TextStyle(
-                      color: Colors.white, fontWeight: FontWeight.bold),
-                ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 0),
+          leading: progressCircle(),
+          title: Text(todo.title,
+              style: const TextStyle(
+                  color: Colors.white, fontWeight: FontWeight.bold)),
+          subtitle: Text(todo.subTitle,style: TextStyle(color: Colors.grey.shade200),),
+          trailing: Container(
+            constraints: const BoxConstraints(maxWidth: 50),
+            child: TextButton(
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 5.0,
+                ), // 设置内边距
+              ),
+              onPressed: () {},
+              child: const Text(
+                "编辑",
+                style: TextStyle(
+                    color: Colors.white, fontWeight: FontWeight.bold),
               ),
             ),
           ),
