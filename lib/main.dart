@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fun_toolbox/todo/todo_page.dart';
+import 'package:fun_toolbox/paper/paper_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TodoPage(),
+      home: const PaperPage(),
     );
   }
 }
