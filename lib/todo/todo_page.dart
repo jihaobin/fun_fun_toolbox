@@ -1,9 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:fun_toolbox/todo/todo_app_bar.dart';
+import 'package:fun_toolbox/todo/todo_dialog.dart';
 import 'package:fun_toolbox/todo/todo_item.dart';
 import 'package:uuid/uuid.dart';
 
 import 'model/todo_Item_model.dart';
+
+final List<CategoriesModel> categories = [
+  CategoriesModel(TodoType.noSet, "全部"),
+  CategoriesModel(TodoType.work, "工作"),
+  CategoriesModel(TodoType.learn, "学习"),
+  CategoriesModel(TodoType.life, "生活")
+];
+
 
 class TodoPage extends StatefulWidget {
   const TodoPage({super.key});
@@ -14,37 +23,45 @@ class TodoPage extends StatefulWidget {
 
 class _TodoPageState extends State<TodoPage> {
   late CategoriesModel currentCategory;
-  List<CategoriesModel> categories = [
-    CategoriesModel(TodoType.noSet, "全部"),
-    CategoriesModel(TodoType.work, "工作"),
-    CategoriesModel(TodoType.learn, "学习"),
-    CategoriesModel(TodoType.life, "生活")
-  ];
+
   List<TodoItemModel> todos = [
     TodoItemModel(
         id: const Uuid().v4(),
         title: '待办1',
         type: TodoType.noSet,
-        status: CompletionStatus.notCompleted),
+    ),
     TodoItemModel(
         id: const Uuid().v4(),
         title: '待办2',
         type: TodoType.learn,
-        status: CompletionStatus.completed),
+        progress: 1
+    ),
     TodoItemModel(
         id: const Uuid().v4(),
         title: '待办3',
         type: TodoType.life,
-        status: CompletionStatus.progressing),
+        progress: 0.5
+    ),
     TodoItemModel(id: const Uuid().v4(), title: '待办4', type: TodoType.work),
   ];
 
   TextEditingController controller = TextEditingController();
 
+  final TextEditingController dialogTitleController = TextEditingController();
+
+  final TextEditingController dialogSubTitleController =
+      TextEditingController();
+
+  final dialogProgressController = TextEditingController();
+
+  late CategoriesModel dialogCurrentCategory;
+
+
   @override
   void initState() {
     super.initState();
     currentCategory = categories[0];
+    dialogCurrentCategory = categories[0];
   }
 
   @override
@@ -78,12 +95,15 @@ class _TodoPageState extends State<TodoPage> {
               setState(() {});
             },
             todo: categoryTodo[index],
+            onUpdateTodo: (){
+              updateDetailTodoDialog(index);
+            },
           );
         },
       ),
       floatingActionButton: FloatingActionButton.small(
         backgroundColor: Colors.blue,
-        onPressed: () {},
+        onPressed: addDetailTodoDialog,
         tooltip: "添加TODO",
         child: const Icon(
           Icons.add_circle_outline_sharp,
@@ -100,8 +120,9 @@ class _TodoPageState extends State<TodoPage> {
 
     todos = [
       TodoItemModel(
-          id: const Uuid().v4(),
-          title: controller.text,),
+        id: const Uuid().v4(),
+        title: controller.text,
+      ),
       ...todos
     ];
 
@@ -110,11 +131,74 @@ class _TodoPageState extends State<TodoPage> {
   }
 
   List<TodoItemModel> get categoryTodo {
-    if(currentCategory.type == TodoType.noSet) {
+    if (currentCategory.type == TodoType.noSet) {
       // 如果当前分类的类型为未设置，则直接返回所有待办事项
       return todos;
     }
     // 否则，筛选出类型与当前分类相同的待办事项，并将其存入列表中
-    return todos.where((element) => element.type == currentCategory.type).toList();
+    return todos
+        .where((element) => element.type == currentCategory.type)
+        .toList();
   }
+
+  void addDetailTodoDialog() async {
+    await showDetailDialog(addDetailTodo);
+  }
+
+  Future<void> showDetailDialog(VoidCallback onConfirm,{String confirmText = "确定"}) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return TodoDialogBuilder(
+          onConfirm: onConfirm,
+          dialogTitleController: dialogTitleController,
+          currentCategory: dialogCurrentCategory,
+          dialogProgressController: dialogProgressController,
+          dialogSubTitleController: dialogSubTitleController,
+        );
+      },
+    );
+  }
+
+  void clearTodoDetail(){
+  dialogTitleController.text = "";
+  dialogSubTitleController.text = "";
+  dialogProgressController.text = "";
+  dialogCurrentCategory = categories[0];
+  }
+
+  void addDetailTodo() {
+    todos = [
+      TodoItemModel(
+        id: const Uuid().v4(),
+        title: dialogTitleController.text,
+        subTitle: dialogSubTitleController.text,
+        progress: double.parse(dialogProgressController.text) / 100,
+        type: dialogCurrentCategory.type,
+      ),
+      ...todos
+    ];
+    clearTodoDetail();
+    setState(() {});
+  }
+
+  void updateDetailTodoDialog(int index) async{
+    dialogSubTitleController.text = todos[index].subTitle;
+    dialogTitleController.text = todos[index].title;
+    dialogProgressController.text = ((todos[index].progress) * 100).toInt().toString();
+    dialogCurrentCategory = categories.firstWhere((element) => element.type == todos[index].type);
+    await showDetailDialog(confirmText: "编辑",(){
+      updateDetailTodo(index);
+    });
+
+    clearTodoDetail();
+  }
+  void updateDetailTodo(int index) {
+    todos[index].progress = double.parse(dialogProgressController.text) / 100;
+    todos[index].subTitle = dialogSubTitleController.text;
+    todos[index].title = dialogTitleController.text;
+    todos[index].type = dialogCurrentCategory.type;
+    setState(() {});
+  }
+
 }

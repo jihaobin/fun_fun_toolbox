@@ -5,9 +5,10 @@ import 'package:progress_border/progress_border.dart';
 import 'model/todo_Item_model.dart';
 
 class TodoItem extends StatelessWidget {
-  const TodoItem({super.key, required this.deleteTodo, required this.todo});
+  const TodoItem({super.key, required this.deleteTodo, required this.todo, required this.onUpdateTodo});
 
   final VoidCallback deleteTodo;
+  final VoidCallback onUpdateTodo;
   final TodoItemModel todo;
 
   @override
@@ -59,7 +60,7 @@ class TodoItem extends StatelessWidget {
                   horizontal: 5.0,
                 ), // 设置内边距
               ),
-              onPressed: () {},
+              onPressed: onUpdateTodo,
               child: const Text(
                 "编辑",
                 style: TextStyle(
