@@ -138,10 +138,12 @@ class _PaperState extends State<PaperPage> {
   }
 
   void _onPanUpdate(DragUpdateDetails details) {
-    setState(() {
+    Offset point = details.localPosition;
+    double distance = (_lines.last.points.last - point).distance;
+    if (distance > 10) {
       _lines.last.points.add(details.localPosition);
-    });
-    setState(() {});
+      setState(() {});
+    }
   }
 
   void _back() {
