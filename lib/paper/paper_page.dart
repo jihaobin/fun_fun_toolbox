@@ -18,6 +18,8 @@ class PaperPage extends StatefulWidget {
 class _PaperState extends State<PaperPage> {
   final List<Line> _lines = []; // 线列表
 
+  final _historyLines = []; // 历史线列表
+
   int _activeColorIndex = 0; // 颜色激活索引
   int _activeStorkWidthIndex = 0; // 线宽激活索引
 
@@ -52,6 +54,8 @@ class _PaperState extends State<PaperPage> {
     return Scaffold(
       appBar: PaperAppBar(
         onClear: _clear,
+        onBack: _lines.isEmpty || _historyLines.length >=20 ? null : _back,
+        onRevocation: _historyLines.isEmpty ? null : _revocation,
       ),
       body: GestureDetector(
         onPanUpdate: _onPanUpdate,
@@ -124,6 +128,19 @@ class _PaperState extends State<PaperPage> {
     });
     setState(() {});
   }
+  
+  void _back(){
+    Line line = _lines.removeLast();
+    _historyLines.add(line);
+    setState(() {});
+  }
+
+  void _revocation(){
+    Line line = _historyLines.removeLast();
+    _lines.add(line);
+    setState(() {});
+  }
+
 }
 
 class PaperPainter extends CustomPainter {
@@ -146,7 +163,6 @@ class PaperPainter extends CustomPainter {
     _paint.strokeWidth = line.strokeWidth;
     canvas.drawPoints(PointMode.polygon, line.points, _paint);
   }
-
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 }
