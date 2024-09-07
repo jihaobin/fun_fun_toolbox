@@ -6,10 +6,13 @@ class PaperAppBar extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onClear;
   final VoidCallback? onBack;
   final VoidCallback? onRevocation;
+  final VoidCallback onDownLoadFile;
 
   const PaperAppBar({
     super.key,
-    required this.onClear, this.onBack, this.onRevocation,
+    required this.onClear,
+    this.onBack,
+    this.onRevocation, required this.onDownLoadFile,
   });
 
   @override
@@ -21,7 +24,10 @@ class PaperAppBar extends StatelessWidget implements PreferredSizeWidget {
           statusBarIconBrightness: Brightness.dark,
           statusBarColor: Colors.transparent),
       backgroundColor: Colors.white,
-      leading: BackUpButtons(onBack: onBack, onRevocation: onRevocation,),
+      leading: BackUpButtons(
+        onBack: onBack,
+        onRevocation: onRevocation,
+      ),
       leadingWidth: 100,
       title: const Text(
         '画板绘制',
@@ -29,13 +35,17 @@ class PaperAppBar extends StatelessWidget implements PreferredSizeWidget {
       ),
       actions: [
         IconButton(
+          onPressed: onDownLoadFile,
+          icon: const Icon(Icons.save_alt_rounded),
+        ),
+        IconButton(
             splashRadius: 20,
             onPressed: onClear,
             icon: const Icon(
               CupertinoIcons.delete,
               color: Colors.black,
               size: 20,
-            ))
+            )),
       ],
     );
   }
@@ -69,7 +79,7 @@ class BackUpButtons extends StatelessWidget {
               splashRadius: 1,
               constraints: cts,
               onPressed: onBack,
-              icon: Icon(Icons.next_plan_outlined,color: backColor),
+              icon: Icon(Icons.next_plan_outlined, color: backColor),
             ),
           ),
           IconButton(
