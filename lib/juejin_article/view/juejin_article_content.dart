@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../icons/icons.dart';
 import '../api/articleRequest.dart';
 import '../model/article.dart';
 import 'juejin_article_detail_page.dart';
@@ -14,24 +15,54 @@ class ArticleContent extends StatefulWidget {
 class _ArticleContentState extends State<ArticleContent> {
   List<Article> _articles = [];
   ArticleApi api = ArticleApi();
+  Future<List<Article>>? _futureArticles;
+
+  static const _uuid = 7395085426157536806;
 
   @override
   void initState() {
     super.initState();
-    _loadData();
+    // 缓存Future对象，防止多次调用请求
+    _futureArticles = _loadData();
   }
 
-  void _loadData() async {
-    _articles = await api.loadArticles(uuid: 7395085426157536806);
-    setState(() {});
+  Future<List<Article>> _loadData({
+    int limit = 20,
+    int page = 1,
+    ArticleType type = ArticleType.recommend
+}) async{
+    return await api.loadArticles(uuid: _uuid, limit: limit, page: page, type: type);
   }
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemExtent: 100,
-      itemCount: _articles.length,
-      itemBuilder: _buildItemByIndex,
+    return FutureBuilder(
+      future: _futureArticles,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          _articles = [...?snapshot.data];
+          return ListView.builder(
+            itemExtent: 100,
+            itemCount: _articles.length,
+            itemBuilder: _buildItemByIndex,
+          );
+        }
+        if (snapshot.hasError) {
+          return Center(
+            child: Text(snapshot.error.toString()),
+          );
+        }
+        if (!snapshot.hasData) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+        return const Center(
+          child: CircularProgressIndicator(
+            color: Colors.blue,
+          ),
+        );
+      }
     );
   }
 
@@ -116,7 +147,7 @@ class ArticleItem extends StatelessWidget {
                       Row(
                         children: [
                           const Icon(
-                            Icons.linked_camera_rounded,
+                            AppIcons.digg,
                             color: Color(0xFF9EA4b0),
                             size: 20,
                           ),
