@@ -4,13 +4,14 @@ import 'package:fun_toolbox/todo/todo_dialog.dart';
 import 'package:fun_toolbox/todo/todo_item.dart';
 import 'package:uuid/uuid.dart';
 
+import '../componts/dropdown_selector.dart';
 import 'model/todo_Item_model.dart';
 
-final List<CategoriesModel> categories = [
-  CategoriesModel(TodoType.noSet, "全部"),
-  CategoriesModel(TodoType.work, "工作"),
-  CategoriesModel(TodoType.learn, "学习"),
-  CategoriesModel(TodoType.life, "生活")
+final List<DropdownSelectorModel<TodoType>> categories = [
+  DropdownSelectorModel(selectedName: '全部', selectedType: TodoType.noSet),
+  DropdownSelectorModel(selectedName: '学习', selectedType: TodoType.learn),
+  DropdownSelectorModel(selectedName: '生活', selectedType: TodoType.life),
+  DropdownSelectorModel(selectedName: '工作', selectedType: TodoType.work),
 ];
 
 
@@ -22,7 +23,7 @@ class TodoPage extends StatefulWidget {
 }
 
 class _TodoPageState extends State<TodoPage> {
-  late CategoriesModel currentCategory;
+  late DropdownSelectorModel<TodoType> currentCategory;
 
   List<TodoItemModel> todos = [
     TodoItemModel(
@@ -54,7 +55,7 @@ class _TodoPageState extends State<TodoPage> {
 
   final dialogProgressController = TextEditingController();
 
-  late CategoriesModel dialogCurrentCategory;
+  late DropdownSelectorModel<TodoType> dialogCurrentCategory;
 
 
   @override
@@ -77,7 +78,7 @@ class _TodoPageState extends State<TodoPage> {
         controller: controller,
         currentCategory: currentCategory,
         categories: categories,
-        onCategoryChanged: (CategoriesModel? value) {
+        onCategoryChanged: (DropdownSelectorModel<TodoType>? value) {
           // 对当前的Todos列表进行分类
           if (value != null) {
             currentCategory = value;
@@ -131,13 +132,13 @@ class _TodoPageState extends State<TodoPage> {
   }
 
   List<TodoItemModel> get categoryTodo {
-    if (currentCategory.type == TodoType.noSet) {
+    if (currentCategory.selectedType == TodoType.noSet) {
       // 如果当前分类的类型为未设置，则直接返回所有待办事项
       return todos;
     }
     // 否则，筛选出类型与当前分类相同的待办事项，并将其存入列表中
     return todos
-        .where((element) => element.type == currentCategory.type)
+        .where((element) => element.type == currentCategory.selectedType)
         .toList();
   }
 
@@ -174,7 +175,7 @@ class _TodoPageState extends State<TodoPage> {
         title: dialogTitleController.text,
         subTitle: dialogSubTitleController.text,
         progress: double.parse(dialogProgressController.text) / 100,
-        type: dialogCurrentCategory.type,
+        type: dialogCurrentCategory.selectedType,
       ),
       ...todos
     ];
@@ -186,7 +187,7 @@ class _TodoPageState extends State<TodoPage> {
     dialogSubTitleController.text = todos[index].subTitle;
     dialogTitleController.text = todos[index].title;
     dialogProgressController.text = ((todos[index].progress) * 100).toInt().toString();
-    dialogCurrentCategory = categories.firstWhere((element) => element.type == todos[index].type);
+    dialogCurrentCategory = categories.firstWhere((element) => element.selectedType == todos[index].type);
     await showDetailDialog(confirmText: "编辑",(){
       updateDetailTodo(index);
     });
@@ -197,7 +198,7 @@ class _TodoPageState extends State<TodoPage> {
     todos[index].progress = double.parse(dialogProgressController.text) / 100;
     todos[index].subTitle = dialogSubTitleController.text;
     todos[index].title = dialogTitleController.text;
-    todos[index].type = dialogCurrentCategory.type;
+    todos[index].type = dialogCurrentCategory.selectedType;
     setState(() {});
   }
 

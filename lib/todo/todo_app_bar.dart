@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../componts/dropdown_selector.dart';
 import 'model/todo_Item_model.dart';
 
 class TodoAppBar extends StatelessWidget implements PreferredSizeWidget{
 
-  final CategoriesModel currentCategory;
+  final DropdownSelectorModel<TodoType> currentCategory;
 
-  final List<CategoriesModel> categories;
+  final List<DropdownSelectorModel<TodoType>> categories;
 
-  final void Function(CategoriesModel? value) onCategoryChanged;
+  final void Function(DropdownSelectorModel<TodoType>? value) onCategoryChanged;
 
   final VoidCallback onAddTodo;
 
@@ -41,16 +42,8 @@ class TodoAppBar extends StatelessWidget implements PreferredSizeWidget{
             color: Colors.blue,
           ),
         ),
-        DropdownButton<CategoriesModel>(
-          value: currentCategory,
-          items: categories.map((
-              CategoriesModel value,) {
-            return DropdownMenuItem(
-              value: value,
-              child: Text(value.categoryName),
-            );
-          }).toList(),
-          onChanged:onCategoryChanged
+        DropdownSelector(
+          value: currentCategory, items: categories,onChanged: onCategoryChanged,
         )
       ],
     );

@@ -27,20 +27,6 @@ class TodoItemModel {
       : assert(progress >= 0 && progress <= 1);
 }
 
-class CategoriesModel {
-  final TodoType type;
-  final String categoryName;
-
-  CategoriesModel(this.type, this.categoryName);
-}
-
-class CompletionStatusModel {
-  final CompletionStatus status;
-  final String statusName;
-
-  CompletionStatusModel(this.status, this.statusName);
-}
-
 enum CompletionStatus { completed, notCompleted, progressing }
 
 enum TodoType {

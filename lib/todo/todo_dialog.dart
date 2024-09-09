@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fun_toolbox/todo/todo_page.dart';
 
+import '../componts/dropdown_selector.dart';
 import 'model/todo_Item_model.dart';
 
 class TodoDialogBuilder extends StatelessWidget {
@@ -9,10 +10,17 @@ class TodoDialogBuilder extends StatelessWidget {
   final TextEditingController dialogTitleController;
   final TextEditingController dialogProgressController;
   final TextEditingController dialogSubTitleController;
-  CategoriesModel currentCategory;
+  DropdownSelectorModel<TodoType> currentCategory;
   final String confirmText;
 
-  TodoDialogBuilder({super.key, required this.onConfirm, required this.dialogTitleController,required this.currentCategory, required this.dialogProgressController, required this.dialogSubTitleController, this.confirmText = "添加"});
+  TodoDialogBuilder(
+      {super.key,
+      required this.onConfirm,
+      required this.dialogTitleController,
+      required this.currentCategory,
+      required this.dialogProgressController,
+      required this.dialogSubTitleController,
+      this.confirmText = "添加"});
 
   final GlobalKey _formKey = GlobalKey<FormState>();
 
@@ -33,52 +41,51 @@ class TodoDialogBuilder extends StatelessWidget {
           child: Column(
             children: [
               titleTextField(),
-              const SizedBox(height: 5,),
-              Row(children: [
-                const Text("类型："),
-                const SizedBox(
-                  width: 10,
-                ),
-                DropdownButton<CategoriesModel>(
-                  underline: Container(
-                    height: 2,
-                    color: Colors.grey,
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Text("类型："),
+                  const SizedBox(
+                    width: 10,
                   ),
-                  value: currentCategory,
-                  items: categories.map((
-                      CategoriesModel value,) {
-                    return DropdownMenuItem(
-                      value: value,
-                      child: Text(value.categoryName),
-                    );
-                  }).toList(),
-                  onChanged: (CategoriesModel? Category) {
-                    currentCategory = Category!;
-                  },
-                ),
-              ]),
-              const SizedBox(height: 5,),
-              Row(children: [
-                const Text("完成进度："),
-                Expanded(
-                  child: TextFormField(
-                    keyboardType: TextInputType.number,
-                    controller: dialogProgressController,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      isDense: true,
-                      isCollapsed: true,
-                      contentPadding: EdgeInsets.all(5),
-                      suffixText: "%"
+                  DropdownSelector.underline(
+                    value: currentCategory,
+                    items: categories,
+                    onChanged: (DropdownSelectorModel<TodoType>? category) {
+                      currentCategory = category!;
+                    },
+                  )
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
+              Row(
+                children: [
+                  const Text("完成进度："),
+                  Expanded(
+                    child: TextFormField(
+                      keyboardType: TextInputType.number,
+                      controller: dialogProgressController,
+                      decoration: const InputDecoration(
+                          border: OutlineInputBorder(),
+                          isDense: true,
+                          isCollapsed: true,
+                          contentPadding: EdgeInsets.all(5),
+                          suffixText: "%"),
+                      style: const TextStyle(fontSize: 12),
+                      inputFormatters: [
+                        RangeInputFormatter(min: 0, max: 100),
+                      ],
                     ),
-                    style: const TextStyle(fontSize: 12),
-                    inputFormatters: [
-                      RangeInputFormatter(min: 0, max: 100),
-                    ],
                   ),
-                ),
-              ],),
-              const SizedBox(height: 5,),
+                ],
+              ),
+              const SizedBox(
+                height: 5,
+              ),
               subTitleTextArea(),
             ],
           ),
@@ -87,7 +94,7 @@ class TodoDialogBuilder extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: () {
-            if(!(_formKey.currentState as FormState).validate()){
+            if (!(_formKey.currentState as FormState).validate()) {
               return;
             }
             onConfirm();
@@ -122,13 +129,14 @@ class TodoDialogBuilder extends StatelessWidget {
         child: TextFormField(
           controller: dialogTitleController,
           decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              isDense: true,
-              isCollapsed: true,
-              contentPadding: EdgeInsets.all(5),),
+            border: OutlineInputBorder(),
+            isDense: true,
+            isCollapsed: true,
+            contentPadding: EdgeInsets.all(5),
+          ),
           style: const TextStyle(fontSize: 12),
-          validator: (v){
-            if(v == null || v.isEmpty){
+          validator: (v) {
+            if (v == null || v.isEmpty) {
               return "标题不能为空";
             }
             return null;
@@ -174,9 +182,9 @@ class RangeInputFormatter extends TextInputFormatter {
 
   @override
   TextEditingValue formatEditUpdate(
-      TextEditingValue oldValue,
-      TextEditingValue newValue,
-      ) {
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
     final text = newValue.text;
 
     // 验证输入是否为有效的数字
