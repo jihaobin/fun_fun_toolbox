@@ -1,3 +1,5 @@
+import 'package:easy_refresh/easy_refresh.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../componts/dropdown_selector.dart';
@@ -18,74 +20,91 @@ class ArticleContent extends StatefulWidget {
 class _ArticleContentState extends State<ArticleContent> {
   List<Article> _articles = [];
   ArticleApi api = ArticleApi();
-  Future<List<Article>>? _futureArticles;
+  int _page = 1;
+  int _limit = 20;
 
   static const _uuid = 7395085426157536806;
+  bool _loading = false;
 
   @override
   void initState() {
     super.initState();
-    // 缓存Future对象，防止多次调用请求
-    _futureArticles = _loadData();
+    _loadData();
   }
 
   @override
-  void didUpdateWidget(ArticleContent oldWidget) {
+  didUpdateWidget(covariant oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    // 仅在 currentCategory 改变时重新加载数据
-    if (widget.currentCategory != oldWidget.currentCategory) {
-        // 修改缓存的Future对象，触发数据的请求刷新
-      _futureArticles = _loadData();
+    if(oldWidget.currentCategory.selectedType != widget.currentCategory.selectedType){
+      _page = 1;
+      _loadData();
     }
   }
 
-  Future<List<Article>> _loadData({int limit = 20, int page = 1}) async {
+  Future<List<Article>> _onRequestData() async {
     return await api.loadArticles(
         uuid: _uuid,
-        limit: limit,
-        page: page,
+        limit: _limit,
+        page: _page,
         type: widget.currentCategory.selectedType);
+  }
+
+  void _loadData() async {
+    _loading = true;
+    setState(() {});
+    _articles = await _onRequestData();
+    _loading = false;
+    setState(() {});
+  }
+
+  void _onRefresh() async {
+    _page = 1;
+    _articles = await _onRequestData();
+    setState(() {});
+  }
+
+  void _onLoadMore() async{
+    _page += _limit;
+    _articles = [..._articles, ...await _onRequestData()];
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: _futureArticles,
-        builder: (context, snapshot) {
-          if(snapshot.connectionState == ConnectionState.waiting){
-            return const Center(
-              child: CircularProgressIndicator(
-                color: Colors.blue,
-              ),
-            );
-          }
+    if(_loading){
+      return const Center(
+        child: Wrap(
+          spacing: 10,
+          direction: Axis.vertical,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            CupertinoActivityIndicator(),
+            Text("数据加载中，请稍后...",style: TextStyle(color: Colors.grey),)
+          ],
+        ),
+      );
+    }
 
-          if (snapshot.hasData) {
-            _articles = snapshot.data!;
-            return ListView.builder(
-              itemExtent: 100,
-              itemCount: _articles.length,
-              itemBuilder: _buildItemByIndex,
-            );
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Text(snapshot.error.toString()),
-            );
-          }
-          if (!snapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+    return EasyRefresh(
+      header: const ClassicHeader(
+        dragText: "下拉加载",
+        armedText: "释放刷新",
+        readyText: "开始加载",
+        processingText: "正在加载",
+        processedText: "刷新成功",
+      ),
+      footer:const ClassicFooter(
+          processingText: "正在加载"
+      ),
+      onRefresh:_onRefresh,
+      onLoad: _onLoadMore,
+      child: ListView.builder(
+        itemExtent: 100,
+        itemCount: _articles.length,
+        itemBuilder: _buildItemByIndex,
+      ),
+    );
 
-          return const Center(
-            child: CircularProgressIndicator(
-              color: Colors.blue,
-            ),
-          );
-        });
   }
 
   Widget _buildItemByIndex(BuildContext context, int index) {
