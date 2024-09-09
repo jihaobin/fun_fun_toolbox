@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 
+import '../../componts/dropdown_selector.dart';
 import '../../icons/icons.dart';
 import '../api/articleRequest.dart';
-import '../model/article.dart';
+import '../model/article_model.dart';
 import 'juejin_article_detail_page.dart';
 
 class ArticleContent extends StatefulWidget {
-  const ArticleContent({super.key});
+  const ArticleContent({super.key, required this.currentCategory});
+
+  final DropdownSelectorModel<ArticleType> currentCategory;
 
   @override
   State<ArticleContent> createState() => _ArticleContentState();
@@ -26,44 +29,63 @@ class _ArticleContentState extends State<ArticleContent> {
     _futureArticles = _loadData();
   }
 
-  Future<List<Article>> _loadData({
-    int limit = 20,
-    int page = 1,
-    ArticleType type = ArticleType.recommend
-}) async{
-    return await api.loadArticles(uuid: _uuid, limit: limit, page: page, type: type);
+  @override
+  void didUpdateWidget(ArticleContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // 仅在 currentCategory 改变时重新加载数据
+    if (widget.currentCategory != oldWidget.currentCategory) {
+        // 修改缓存的Future对象，触发数据的请求刷新
+      _futureArticles = _loadData();
+    }
+  }
+
+  Future<List<Article>> _loadData({int limit = 20, int page = 1}) async {
+    return await api.loadArticles(
+        uuid: _uuid,
+        limit: limit,
+        page: page,
+        type: widget.currentCategory.selectedType);
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _futureArticles,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          _articles = [...?snapshot.data];
-          return ListView.builder(
-            itemExtent: 100,
-            itemCount: _articles.length,
-            itemBuilder: _buildItemByIndex,
-          );
-        }
-        if (snapshot.hasError) {
-          return Center(
-            child: Text(snapshot.error.toString()),
-          );
-        }
-        if (!snapshot.hasData) {
+        future: _futureArticles,
+        builder: (context, snapshot) {
+          if(snapshot.connectionState == ConnectionState.waiting){
+            return const Center(
+              child: CircularProgressIndicator(
+                color: Colors.blue,
+              ),
+            );
+          }
+
+          if (snapshot.hasData) {
+            _articles = snapshot.data!;
+            return ListView.builder(
+              itemExtent: 100,
+              itemCount: _articles.length,
+              itemBuilder: _buildItemByIndex,
+            );
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(snapshot.error.toString()),
+            );
+          }
+          if (!snapshot.hasData) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
           return const Center(
-            child: CircularProgressIndicator(),
+            child: CircularProgressIndicator(
+              color: Colors.blue,
+            ),
           );
-        }
-        return const Center(
-          child: CircularProgressIndicator(
-            color: Colors.blue,
-          ),
-        );
-      }
-    );
+        });
   }
 
   Widget _buildItemByIndex(BuildContext context, int index) {
@@ -170,12 +192,12 @@ class ArticleItem extends StatelessWidget {
                 Container(
                   width: 80,
                   decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(6.0),
-                      border: Border.all(color: Colors.grey, width: 1),
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(article.coverImage),
-                      ),
+                    borderRadius: BorderRadius.circular(6.0),
+                    border: Border.all(color: Colors.grey, width: 1),
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      image: NetworkImage(article.coverImage),
+                    ),
                   ),
                 ),
             ],

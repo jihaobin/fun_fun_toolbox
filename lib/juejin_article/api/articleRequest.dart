@@ -1,22 +1,13 @@
 import 'package:dio/dio.dart';
 
-import '../model/article.dart';
-
-enum ArticleType {
-  news,
-  hotALl,
-  recommend,
-  day3,
-  day7,
-  day30,
-}
+import '../model/article_model.dart';
 
 int articleTypeToValue(ArticleType type) {
   switch (type) {
     case ArticleType.news:
       return 300;
     case ArticleType.hotALl:
-      return 200;
+      return 0;
     case ArticleType.recommend:
       return 200;
     case ArticleType.day3:

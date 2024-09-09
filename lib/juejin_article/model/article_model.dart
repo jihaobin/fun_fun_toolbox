@@ -21,3 +21,12 @@ class Article{
     );
   }
 }
+
+enum ArticleType {
+  news,
+  hotALl,
+  recommend,
+  day3,
+  day7,
+  day30,
+}
