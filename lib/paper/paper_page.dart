@@ -3,6 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fun_toolbox/paper/paper_app_bar.dart';
 import 'package:fun_toolbox/paper/paper_color_selector.dart';
 import 'package:fun_toolbox/paper/paper_comform_dialog.dart';
@@ -190,7 +191,18 @@ class _PaperState extends State<PaperPage> {
 
       // 通知系统扫描新的图片
       final result = await ImageGallerySaver.saveImage(pngBytes);
-      print("保存成功: $result");
+      // 成功的提示
+      if (result != null) {
+        Fluttertoast.showToast(
+            msg: "保存成功",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.blueAccent,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
     } on Exception catch (e) {
       print("error saving image: $e");
     }
