@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flame_audio/flame_audio.dart';
@@ -49,10 +50,18 @@ class _MuyuPageState extends State<MuyuPage> {
 
   List<HistoryRecordModel> historyRecord = [];
 
+  Timer? _timer;
+
   @override
   void initState() {
     super.initState();
     initAudioPool();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _timer?.cancel();
   }
 
   void initAudioPool() async {
@@ -107,6 +116,18 @@ class _MuyuPageState extends State<MuyuPage> {
     );
   }
 
+  void resetTimer() {
+    // 如果已有定时器，取消它
+    _timer?.cancel();
+
+    // 创建一个新的定时器
+    _timer = Timer(const Duration(seconds: 2), () {
+      // 定时器结束后清空列表
+      setState(() {
+        _muyuAnimateTextCache.clear();
+      });
+    });
+  }
   int get knockCount {
     int min = muyuTypeOptions[_activeMuyuIndex].min;
     int max = muyuTypeOptions[_activeMuyuIndex].max;
@@ -119,13 +140,9 @@ class _MuyuPageState extends State<MuyuPage> {
     _cruValue = knockCount;
     _counter += knockCount;
     _muyuAnimateTextCache.add(_cruValue);
+    resetTimer();
 
-    // 清除多余的元素
-    if (_muyuAnimateTextCache.length > 30) {
-      _muyuAnimateTextCache.removeLast();
-      _muyuAnimateTextCache.add(_cruValue);
-    }
-
+    // 存储历史纪录
     String id = uuid.v4();
     historyRecord.add(
       HistoryRecordModel(
