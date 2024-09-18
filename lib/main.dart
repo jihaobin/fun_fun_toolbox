@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-
-import 'juejin_article/view/juejin_article_page.dart';
+import 'package:fun_toolbox/muyu/muyu_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +16,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: JueJinArticlePage(),
+      home: MuyuPage(),
     );
   }
 }

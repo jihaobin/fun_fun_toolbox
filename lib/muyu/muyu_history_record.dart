@@ -14,9 +14,6 @@ class MuyuRecordModel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:_buildAppBar(),
-      // body: Column(
-      //   children: List.generate(records.length, (index)=>_buildItem(context,index)),
-      // ),
       body: ListView.builder(
         itemBuilder: _buildItem, itemCount: records.length,
       ),
@@ -42,9 +39,9 @@ class MuyuRecordModel extends StatelessWidget {
         backgroundImage: AssetImage(merit.image),
       ),
       title: Text('功德 +${merit.value}'),
-      subtitle: Text(merit.audio),
-      trailing: Text(
+      subtitle: Text(
         date, style: const TextStyle(fontSize: 12, color: Colors.grey),),
+      trailing: Text(merit.audio),
     );
   }
 }

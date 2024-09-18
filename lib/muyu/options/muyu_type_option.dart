@@ -59,7 +59,7 @@ class MuyuOptionPanel extends StatelessWidget {
     bool active = index == activeIndex;
     return GestureDetector(
       onTap: () => onSelect(index),
-      child: MuyuTypeeOption(
+      child: MuyuTypeOption(
         option: imageOptions[index],
         active: active,
       ),
@@ -67,8 +67,8 @@ class MuyuOptionPanel extends StatelessWidget {
   }
 }
 
-class MuyuTypeeOption extends StatelessWidget {
-  const MuyuTypeeOption(
+class MuyuTypeOption extends StatelessWidget {
+  const MuyuTypeOption(
       {super.key, required this.active, required this.option});
 
   final bool active;
