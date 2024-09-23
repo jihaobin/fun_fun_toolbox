@@ -47,6 +47,7 @@ dependencies:
   webview_flutter: ^4.8.0
   fluttertoast: ^8.2.8
   easy_refresh: ^3.4.0
+  shared_preferences: ^2.3.2
 
 dev_dependencies:
   flutter_test:

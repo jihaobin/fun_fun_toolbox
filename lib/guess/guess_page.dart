@@ -3,53 +3,73 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:fun_toolbox/guess/result_notice.dart';
 
+import '../storage/local_storage.dart';
 import 'guess_app_bar.dart';
 
-class GuessPage extends StatefulWidget{
+class GuessPage extends StatefulWidget {
   const GuessPage({super.key});
 
   @override
   State<GuessPage> createState() => _GuessPageState();
 }
 
-class _GuessPageState extends State<GuessPage> with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin{
-  final TextEditingController _guessTextEditingController = TextEditingController();
+class _GuessPageState extends State<GuessPage>
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  final TextEditingController _guessTextEditingController =
+      TextEditingController();
 
   int _randomValue = 0;
   bool _guessing = false;
 
   bool? _isBig;
 
-  late  AnimationController animatedController;
-  
+  late AnimationController animatedController;
+
   @override
-  initState(){
-    animatedController = AnimationController(vsync: this,duration: const Duration(milliseconds: 500),);
+  initState() {
+    animatedController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 500),
+    );
+    initConfig();
+
     super.initState();
   }
 
-  _generateRandomValue(){
+  initConfig() async {
+    Map<String, dynamic> guessInfo = await LocalStorage.instance.getGuess();
+    _guessing = guessInfo['guessing'] ?? false;
+    _randomValue = guessInfo['value'] ?? 0;
+    setState(() {
+
+    });
+  }
+
+  _generateRandomValue() {
     _guessing = true;
     // 生成一个0-100的随机数
     _randomValue = Random().nextInt(101);
+    LocalStorage.instance.saveGuess(guessing: _guessing, value: _randomValue);
     setState(() {});
   }
 
-  _onCheckGuessValue(){
-    print("=====Check:目标数值:$_randomValue=====${_guessTextEditingController.text}============");
+  _onCheckGuessValue() {
+    print(
+        "=====Check:目标数值:$_randomValue=====${_guessTextEditingController.text}============");
     int? guessValue = int.tryParse(_guessTextEditingController.text);
 
     // 如果游戏没有开始，或者输入的不是整数那么直接无视
-    if(!_guessing || guessValue == null) return;
+    if (!_guessing || guessValue == null) return;
     // 启动动画
     animatedController.forward(from: 0);
 
     // 如果猜对了，那么游戏结束
-    if(guessValue == _randomValue){
+    if (guessValue == _randomValue) {
       _guessing = false;
       _isBig = null;
+      LocalStorage.instance.saveGuess(guessing: _guessing, value: 0);
       setState(() {});
-    }else{
+    } else {
       // 如果猜错了，那么判断猜的大还是小
       _isBig = guessValue > _randomValue;
       _guessTextEditingController.clear();
