@@ -24,7 +24,7 @@ class MuyuPage extends StatefulWidget {
   State<MuyuPage> createState() => _MuyuPageState();
 }
 
-class _MuyuPageState extends State<MuyuPage> {
+class _MuyuPageState extends State<MuyuPage> with AutomaticKeepAliveClientMixin{
   int _counter = 0;
   int _cruValue = 0;
 
@@ -223,4 +223,7 @@ class _MuyuPageState extends State<MuyuPage> {
       },
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

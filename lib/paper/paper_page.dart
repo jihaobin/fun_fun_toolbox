@@ -21,7 +21,7 @@ class PaperPage extends StatefulWidget {
   State<PaperPage> createState() => _PaperState();
 }
 
-class _PaperState extends State<PaperPage> {
+class _PaperState extends State<PaperPage> with AutomaticKeepAliveClientMixin{
   final List<Line> _lines = []; // 线列表
 
   final _historyLines = []; // 历史线列表
@@ -56,6 +56,9 @@ class _PaperState extends State<PaperPage> {
   final List<double> supportStorkWidths = [1, 2, 4, 6, 8, 10];
 
   final _repaintBoundaryKey = GlobalKey();
+
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
@@ -218,6 +221,7 @@ class _PaperState extends State<PaperPage> {
         fontSize: 16.0
     );
   }
+
 }
 
 class PaperPainter extends CustomPainter {

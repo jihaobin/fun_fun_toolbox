@@ -22,7 +22,7 @@ class TodoPage extends StatefulWidget {
   State<TodoPage> createState() => _TodoPageState();
 }
 
-class _TodoPageState extends State<TodoPage> {
+class _TodoPageState extends State<TodoPage> with AutomaticKeepAliveClientMixin{
   late DropdownSelectorModel<TodoType> currentCategory;
 
   List<TodoItemModel> todos = [
@@ -201,5 +201,8 @@ class _TodoPageState extends State<TodoPage> {
     todos[index].type = dialogCurrentCategory.selectedType;
     setState(() {});
   }
+
+  @override
+  bool get wantKeepAlive => true;
 
 }
