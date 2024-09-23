@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fun_toolbox/muyu/muyu_page.dart';
+import 'package:fun_toolbox/page_controller/page_controller.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: MuyuPage(),
+      home: const AppNavigation(),
     );
   }
 }
