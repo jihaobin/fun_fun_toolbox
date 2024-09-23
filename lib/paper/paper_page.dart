@@ -161,13 +161,6 @@ class _PaperState extends State<PaperPage> {
 
   void _canvasSaveFile() async {
     try {
-      // 请求存储权限
-      var status = await Permission.photos.request();
-      if (!status.isGranted) {
-        print("Storage permission not granted.");
-        return;
-      }
-
       // 获取画布上的canvas元素
       RenderRepaintBoundary boundary = _repaintBoundaryKey.currentContext?.findRenderObject() as RenderRepaintBoundary;
       // 将获取画布上的canvas元素转换为图片
@@ -192,20 +185,38 @@ class _PaperState extends State<PaperPage> {
       // 通知系统扫描新的图片
       final result = await ImageGallerySaver.saveImage(pngBytes);
       // 成功的提示
-      if (result != null) {
-        Fluttertoast.showToast(
-            msg: "保存成功",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.blueAccent,
-            textColor: Colors.white,
-            fontSize: 16.0
-        );
+      if (result["isSuccess"]) {
+        toastSuccess();
+      }else{
+        toastError();
       }
     } on Exception catch (e) {
-      print("error saving image: $e");
+      toastError();
     }
+  }
+
+  void toastSuccess() {
+     Fluttertoast.showToast(
+        msg: "保存成功",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.blueAccent,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
+  }
+
+  void toastError() {
+    Fluttertoast.showToast(
+        msg: "保存失败",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.redAccent,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
   }
 }
 
