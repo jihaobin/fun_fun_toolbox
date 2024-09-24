@@ -9,6 +9,7 @@ import 'package:fun_toolbox/muyu/muyu_animate_text.dart';
 import 'package:fun_toolbox/muyu/muyu_image.dart';
 import 'package:uuid/uuid.dart';
 
+import '../storage/local_storage.dart';
 import 'models/history_record_model.dart';
 import 'models/muyu_model.dart';
 import 'muyu_app_bar.dart';
@@ -56,6 +57,16 @@ class _MuyuPageState extends State<MuyuPage> with AutomaticKeepAliveClientMixin{
   void initState() {
     super.initState();
     initAudioPool();
+    _initConfig();
+  }
+
+  void _initConfig() async{
+    Map<String,dynamic> config = await LocalStorage.instance.readMuYUConfig();
+    _counter = config['counter'] ?? 0;
+    _activeMuyuIndex = config['activeMuYuIndex'] ?? 0;
+    _activeAudioIndex = config['activeAudioIndex'] ?? 0;
+    setState(() {
+    });
   }
 
   @override
@@ -118,8 +129,15 @@ class _MuyuPageState extends State<MuyuPage> with AutomaticKeepAliveClientMixin{
 
   // 每次切换木鱼种类的时候，重置当前的随机数以及所有的文字组件
   void _resetState() {
-    _counter = 0;
     _muyuAnimateTextCache.clear();
+  }
+
+  void saveConfig() {
+    LocalStorage.instance.saveMuYUConfig(
+      counter: _counter,
+      activeMuYuIndex: _activeMuyuIndex,
+      activeAudioIndex: _activeAudioIndex,
+    );
   }
 
   void _resetTimer() {
@@ -147,6 +165,7 @@ class _MuyuPageState extends State<MuyuPage> with AutomaticKeepAliveClientMixin{
     _counter += knockCount;
     _muyuAnimateTextCache.add(_cruValue);
     _resetTimer();
+    saveConfig();
 
     // 存储历史纪录
     String id = uuid.v4();
@@ -179,6 +198,7 @@ class _MuyuPageState extends State<MuyuPage> with AutomaticKeepAliveClientMixin{
     // 如果选择的类型和上一次一样，则不更新页面
     if (_activeMuyuIndex == selectIndex) return;
     _activeMuyuIndex = selectIndex;
+    saveConfig();
     setState(() {});
   }
 
@@ -203,6 +223,7 @@ class _MuyuPageState extends State<MuyuPage> with AutomaticKeepAliveClientMixin{
     if (_activeAudioIndex == selectIndex) return;
     _activeAudioIndex = selectIndex;
     FlameAudio.play(activeAudio);
+    saveConfig();
     setState(() {});
 
     // 更新音频池里的音频
